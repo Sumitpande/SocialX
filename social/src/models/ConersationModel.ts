@@ -16,6 +16,26 @@ const conversationSchema = new Schema<IConversation>(
                 default: [],
             },
         ],
+        name: {
+            type: String,
+            default: "",
+        },
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        lastMessage: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Message",
+        },
+        isGroup: {
+            type: Boolean,
+            default: false,
+        },
+        avatar: {
+            type: String,
+            default: "",
+        },
     },
     { timestamps: true },
 );

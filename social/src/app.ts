@@ -1,24 +1,19 @@
 import bodyParser from "body-parser";
 import express, { Application } from "express";
-// import mongoose, { ConnectOptions } from 'mongoose';
-// import config from './config/config';
+
 import router from "./router";
 
 const cors = require("cors");
-// const { Server } = require('socket.io');
+
 const RateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-// const xss = require('xss');
-// const { createServer } = require('node:http');
+
 const morgan = require("morgan");
 const app: Application = express();
-// const server = createServer(app);
-// const port = process.env.PORT || 8000;
-// const mongoURL = `mongodb://${config.MONGO_USER}:${config.MONGO_PASSWORD}@${config.MONGO_IP}/?authSource=admin`;
 
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: /^http:\/\/localhost:\d+$/,
         methods: ["GET", "POST"],
         credentials: true,
     }),
@@ -42,6 +37,7 @@ const limiter = RateLimit({
 });
 
 app.use("/public", limiter);
+app.use(express.static("public"));
 // app.use(xss());
 
 module.exports = app;

@@ -4,6 +4,9 @@ import mongoose, { Schema } from "mongoose";
 import { IPost, Post } from "../models/Post";
 import { IPostLike, PostLike } from "../models/PostLike";
 import { paginate } from "../utils/helper";
+import { uploadOnCloudinary } from "../utils/cloudinary";
+// import multer from "multer";
+// const upload = multer({ dest: "uploads/" });
 const coolDown = new Set();
 
 const USER_LIKES_PAGE_SIZE = 9;
@@ -20,48 +23,65 @@ export const createPost = async (req: Request, res: Response) => {
             throw new Error("You are posting too frequently. Please try again shortly.");
         }
 
+        // const files = req.files || [];
+        const files = JSON.parse(JSON.stringify(req.files));
+        if (files.length > 4) {
+            throw new Error("You can only upload a maximum of 4 images.");
+        }
+        console.log("files ", files);
+        const result: string[] = [];
+        for (const file of files) {
+            const r = await uploadOnCloudinary(file.path);
+            if (r) {
+                result.push(r);
+            }
+        }
+
+        console.log("uploaded--", result);
         // coolDown.add(userId);
         // setTimeout(() => {
         //     coolDown.delete(userId);
         // }, 60000);
 
-        // const post = await Post.create({
-        //     content,
-        //     creator: userId,
-        // });
+        const post = await Post.create({
+            content,
+            creator: userId,
+            images: result,
+        });
+        const populatedPost = await post.populate("creator", "firstName lastName username avatar");
+        res.json(populatedPost);
+    } catch (err: any) {
+        console.log("e", err);
+        return res.status(400).json({ error: err.message }).end();
+    }
+};
 
-        res.json(req.body);
+export const getPost = async (req: Request, res: Response) => {
+    try {
+        const postId = req.params.id;
+        // const { userId } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(postId)) {
+            throw new Error("Post does not exist");
+        }
+
+        const post = await Post.findById(postId).populate("creator", "-password");
+
+        if (!post) {
+            throw new Error("Post does not exist");
+        }
+
+        // if (userId) {
+        //     await setLiked([post], userId);
+        // }
+
+        // await enrichWithUserLikePreview([post]);
+
+        return res.json(post);
     } catch (err) {
         return res.status(400).json({ error: err });
     }
 };
-
-// export const getPost = async (req: Request, res: Response) => {
-//     try {
-//         const postId = req.params.id;
-//         const { userId } = req.body;
-
-//         if (!mongoose.Types.ObjectId.isValid(postId)) {
-//             throw new Error("Post does not exist");
-//         }
-
-//         const post = await Post.findById(postId).populate("poster", "-password");
-
-//         if (!post) {
-//             throw new Error("Post does not exist");
-//         }
-
-//         if (userId) {
-//             await setLiked([post], userId);
-//         }
-
-//         await enrichWithUserLikePreview([post]);
-
-//         return res.json(post);
-//     } catch (err) {
-//         return res.status(400).json({ error: err });
-//     }
-// };
 
 // export const updatePost = async (req: Request, res: Response) => {
 //     try {
@@ -195,7 +215,7 @@ export const getPosts = async (req: Request, res: Response) => {
         const pageQ: any = page ? page : "1";
         const sortByQ: any = sortBy ? sortBy : "1";
 
-        let posts = await Post.find().populate("creator").sort(sortByQ);
+        let posts = await Post.find().populate("creator", "firstName lastName username avatar").sort(sortByQ);
         console.log("posts -------------", posts);
         if (author) {
             posts = posts.filter((post: any) => post.creator.username == author);

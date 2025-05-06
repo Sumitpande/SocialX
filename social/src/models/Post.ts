@@ -6,8 +6,8 @@ export interface IPost extends Document {
     content: string;
     tags?: string[];
     likes?: Number;
-    comments?: string[];
-    images?: string;
+    comments?: Number;
+    images?: string[];
     edited?: boolean;
 }
 
@@ -25,6 +25,11 @@ const PostSchema: Schema = new Schema<IPost>(
             maxLength: [8000, "Must be no more than 8000 characters"],
         },
         images: [
+            {
+                type: String,
+            },
+        ],
+        tags: [
             {
                 type: String,
             },

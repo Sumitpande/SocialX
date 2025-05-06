@@ -1,0 +1,7 @@
+.main-layout-container{
+    height: calc(100vh - 64px);
+}
+
+html {
+    font-family: 'Open Sans', sans-serif;
+}

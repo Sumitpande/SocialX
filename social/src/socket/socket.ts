@@ -2,6 +2,7 @@ import { createUserRequest, deleteUserRequestById, getUserRequestsById } from ".
 import { IUserRequest } from "../models/UserRequest";
 import { IUser } from "../models/User";
 import { getUserById, updateUserById } from "../models/UserActions";
+import { getConversationById } from "../models/ConversationActions";
 const { Server } = require("socket.io");
 const app = require("../app");
 const { createServer } = require("node:http");
@@ -9,7 +10,7 @@ const { createServer } = require("node:http");
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: /^http:\/\/localhost:\d+$/,
         methods: ["GET", "POST"],
         credentials: true,
     },
@@ -196,6 +197,22 @@ io.on("connection", async (socket: any) => {
     //     // emit incoming_message -> to user
 
     //     // emit outgoing_message -> from user
+    // });
+
+    // socket.on("incoming_call", async (data: any) => {
+    //     console.log("Incoming call", data);
+    //     const toConversation = await getConversationById(data.conversationId).populate("participants", "socket_id email status");
+    //     console.log("toConversation", toConversation);
+    //     const to = toConversation?.participants.filter((p: any) => p._id.toString() !== data.from.toString()) || [];
+    //     const from = await getUserById(data.from).select("socket_id");
+    //     console.log("to", to);
+    //     // // emit event request received to recipient
+    //     to.forEach((recipient: any) => {
+    //         io.to(recipient?.socket_id).emit("incoming_call", {
+    //             message: "Incoming call",
+    //             from: data.from,
+    //         });
+    //     });
     // });
 
     socket.on("disconnect", () => {

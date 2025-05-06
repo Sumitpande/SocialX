@@ -13,8 +13,15 @@ export interface IMessage extends Document {
     messages: Array<IMessageType>;
 }
 
-export interface IConversation extends Document {
+export interface IConversation extends Document<mongoose.Schema.Types.ObjectId> {
     id?: string;
     participants: Array<mongoose.Schema.Types.ObjectId>;
     messages: Array<mongoose.Schema.Types.ObjectId>;
+    name: string;
+    createdBy: mongoose.Schema.Types.ObjectId;
+    lastMessage: mongoose.Schema.Types.ObjectId;
+    isGroup: boolean;
+    avatar: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

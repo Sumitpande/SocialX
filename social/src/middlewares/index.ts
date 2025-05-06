@@ -5,6 +5,22 @@ import { getUserById, getUserBySessionToken } from "../models/UserActions";
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "social";
 
+import multer from "multer";
+const { v4: uuidv4 } = require("uuid");
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./public/temp/uploads");
+    },
+    filename: function (req, file, cb) {
+        const random = uuidv4();
+        cb(null, random + "" + file.originalname);
+    },
+});
+
+export const upload = multer({
+    storage,
+});
+
 export interface IRequest extends Request {
     userId: string;
 }

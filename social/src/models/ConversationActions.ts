@@ -9,6 +9,6 @@ export const getConversationById = (id: string) => ConversationModel.findById(id
 
 export const addMessageToConversation = (id: any, message: any) => ConversationModel.findOneAndUpdate({ _id: id }, { $push: { messages: message } });
 
-export const createConversation = (values: Record<string, any>) => new ConversationModel(values).save().then((msg) => msg.toObject());
+export const createConversation = (values: Record<string, any>) => new ConversationModel(values).save();
 
 export const deleteDMById = (id: string) => ConversationModel.findOneAndDelete({ _id: id });
