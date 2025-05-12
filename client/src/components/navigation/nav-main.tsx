@@ -6,7 +6,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export function NavMain({
   items,
@@ -19,6 +20,12 @@ export function NavMain({
   }[];
 }) {
   const { state } = useSidebar();
+  const location = useLocation();
+  const isActive = (url: string) => {
+    console.log("isActive", url, location.pathname);
+
+    return url === location.pathname;
+  };
   return (
     <SidebarMenu className="px-2">
       {items.map((item) => (
@@ -26,11 +33,21 @@ export function NavMain({
           className={state == "expanded" ? "self-start w-full" : "self-center"}
           key={item.title}
         >
-          <SidebarMenuButton asChild isActive={item.isActive}>
-            <Link to={item.url}>
+          <SidebarMenuButton
+            asChild
+            className={`transition-colors ${
+              isActive(item.url)
+                ? "bg-blue-100 text-blue-700"
+                : "hover:bg-muted"
+            }`}
+          >
+            <NavLink
+              to={item.url}
+              state={{ fromSidebar: true, title: item.title }}
+            >
               <item.icon />
               <span>{item.title}</span>
-            </Link>
+            </NavLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

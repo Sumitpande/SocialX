@@ -188,8 +188,8 @@ const path = (root: string, endpoint: string) => {
 export const APP_PATH = {
   root: ROOT_PATH,
   general: {
-    home: "",
-    messages: "messages",
+    home: path(ROOT_PATH, ""),
+    messages: path(ROOT_PATH, "messages"),
   },
   login: path(ROOT_PATH, "login"),
   register: path(ROOT_PATH, "register"),

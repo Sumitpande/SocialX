@@ -28,7 +28,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/" + APP_PATH.root,
+      url: APP_PATH.general.home,
       icon: Home,
       isActive: true,
     },
