@@ -22,8 +22,6 @@ export function NavMain({
   const { state } = useSidebar();
   const location = useLocation();
   const isActive = (url: string) => {
-    console.log("isActive", url, location.pathname);
-
     return url === location.pathname;
   };
   return (
