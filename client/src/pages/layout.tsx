@@ -1,40 +1,58 @@
 import { AppSidebar } from "@/components/navigation/app-sidebar";
-import { Input } from "@/components/ui/input";
-
-import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Search } from "lucide-react";
 
 import { Outlet } from "react-router-dom";
-
+import useListenCall from "@/hooks/useListenCall";
+import useConversationStore from "@/store/conversationStore";
+import { IncomingCallAlert } from "@/components/calls/IncomingCall";
+import { OutgoingCall } from "@/components/calls/OutgoingCall";
+import useListenMessages from "@/hooks/useListenMessage";
+import BottomNav from "@/components/navigation/BottomNav";
+import { useIsMobile } from "@/hooks/use-mobile";
 export default function Layout() {
+  useListenCall();
+  useListenMessages();
+  const {
+    incomingCall,
+    outgoingCall,
+    setIncomingCall,
+    setOutgoingCall,
+    callData,
+    outGoingCallData,
+  } = useConversationStore();
+  const isMobile = useIsMobile();
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 border-b items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <div className="relative w-full min-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                name="search"
-                placeholder="Search..."
-                className="pl-10"
-              />
-            </div>
+    <div>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          {!isMobile && (
+            <SidebarTrigger className=" absolute left-0 top-14 z-50" />
+          )}
+          <div className="p-1 pt-0 main-layout-container">
+            <Outlet />
           </div>
-        </header>
-        <div className="p-1 pt-0 main-layout-container">
-          <Outlet />
+        </SidebarInset>
+      </SidebarProvider>
+      {isMobile && (
+        <div>
+          <BottomNav />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      )}
+      <IncomingCallAlert
+        open={incomingCall}
+        setOpen={setIncomingCall}
+        data={callData}
+      />
+      <OutgoingCall
+        open={outgoingCall}
+        setOpen={setOutgoingCall}
+        data={outGoingCallData}
+      />
+    </div>
   );
 }

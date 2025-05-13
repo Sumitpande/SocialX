@@ -10,6 +10,7 @@ import AuthGuard from "@/components/AuthGuard";
 import GuestGuard from "@/components/GuestGuard";
 import PostDetails from "./components/post/PostDetails";
 import Messages from "./pages/Messages";
+import { FeedContainer } from "./components/post/FeedContainer";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -32,9 +33,15 @@ function App() {
             </AuthGuard>
           }
         >
-          <Route index element={<Home />} />
+          <Route path={"/" + APP_PATH.root} element={<Home />}>
+            <Route
+              index
+              path={APP_PATH.general.home}
+              element={<FeedContainer />}
+            />
+            <Route path="/:username/status/:postId" element={<PostDetails />} />
+          </Route>
           <Route path={APP_PATH.general.messages} element={<Messages />} />
-          <Route path="/post/:username/:postId" element={<PostDetails />} />
 
           <Route path="*" element={<NotFound />}></Route>
         </Route>

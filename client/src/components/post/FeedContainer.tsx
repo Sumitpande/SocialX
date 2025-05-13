@@ -11,7 +11,7 @@ export function FeedContainer() {
   const { loading, posts } = useGetPosts();
   const navigate = useNavigate();
   const gotoPostDetail = (post: IPost) => {
-    navigate(`/post/${post.creator.username}/${post._id}`);
+    navigate(`/${post.creator.username}/status/${post._id}`);
   };
 
   const getPost = (post: IPost) => {
@@ -27,10 +27,13 @@ export function FeedContainer() {
 
   return (
     <Tabs defaultValue="forYou" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 sticky top-0 ">
-        <TabsTrigger value="forYou">For you</TabsTrigger>
-        <TabsTrigger value="following">Following</TabsTrigger>
-      </TabsList>
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 py-2">
+        <TabsList className="grid w-full grid-cols-2  ">
+          <TabsTrigger value="forYou">For you</TabsTrigger>
+          <TabsTrigger value="following">Following</TabsTrigger>
+        </TabsList>
+      </div>
+
       <TabsContent value="forYou">
         <div className=" px-2 pb-8 sm:pb-0 ">
           {!loading ? (

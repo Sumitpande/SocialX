@@ -4,7 +4,7 @@ import {
   useEffect,
   useContext,
   FC,
-  ReactNode
+  ReactNode,
 } from "react";
 // import { useAuthContext } from './AuthContext'
 import SocketService from "../socket";
@@ -22,19 +22,23 @@ export const useSocketContext = () => {
 };
 
 export const SocketContextProvider: FC<{ children: ReactNode }> = ({
-  children
+  children,
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const authCtx = useAuthContext();
+  const { authUser } = useAuthContext();
   // const { token } = useAuthStore()
 
   useEffect(() => {
     // const decoded = jwtDecode<UserIdJwtPayload>(token)
-    console.log("authCtx", authCtx);
-    if (authCtx?.authUser) {
-      SocketService.connect("http://localhost:3000", authCtx?.authUser._id);
-      console.log("authCtx?.authUser._id", authCtx?.authUser._id);
+    console.log("authUser:::::::::::::::::", authUser);
+    if (authUser) {
+      SocketService.connect("http://localhost:3000", authUser?._id);
+      console.log(
+        ">>>>>>>>>>>>>>>>>>>>>>",
+        authUser?._id,
+        SocketService.socket
+      );
       setSocket(SocketService.socket);
       socket?.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
@@ -50,7 +54,7 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({
     }
 
     // socket.on() is used to listen to the events. can be used both on client and server side
-  }, [authCtx?.authUser]);
+  }, [authUser]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers } as ISocketCtx}>

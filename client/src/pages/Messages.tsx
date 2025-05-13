@@ -11,6 +11,8 @@ import { Chat } from "@/components/messages/Chat";
 // import { useAuthContext } from "@/context/AuthContext";
 import useConversationStore from "@/store/conversationStore";
 import { IConversation } from "@/types";
+// import { IncomingCallAlert } from "@/components/calls/IncomingCall";
+// import { OutgoingCall } from "@/components/calls/OutgoingCall";
 // import useListenMessages from "@/Hooks/useListenMessage";
 
 export default function Messages() {
@@ -18,7 +20,15 @@ export default function Messages() {
 
   const [isMobile, setIsMobile] = useState(false);
   // useListenMessages();
-  const { setSelectedConversation } = useConversationStore();
+  const {
+    setSelectedConversation,
+    // incomingCall,
+    // outgoingCall,
+    // setIncomingCall,
+    // setOutgoingCall,
+    // callData,
+    // outGoingCallData,
+  } = useConversationStore();
   // const { authUser } = useAuthContext();
   const navCollapsedSize = 8;
   const defaultLayout = [35, 65];

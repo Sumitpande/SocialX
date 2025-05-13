@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { IIncomingCallData } from "@/types";
+import { ICallData } from "@/types";
 import { Phone, PhoneOff } from "lucide-react";
 
 export function IncomingCallAlert({
@@ -18,7 +18,7 @@ export function IncomingCallAlert({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  data: IIncomingCallData;
+  data: ICallData;
 }) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -29,16 +29,33 @@ export function IncomingCallAlert({
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center my-4 flex flex-col items-center gap-3">
             <Avatar className="w-16 h-16 mx-auto ">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage
+                src={data.isGroup ? data.avatar : data?.from?.avatar}
+                alt="@shadcn"
+              />
+              <AvatarFallback>
+                {data.isGroup ? data.name[0] : data?.from?.firstName[0]}
+              </AvatarFallback>
             </Avatar>
-            <div className="font-bold text-lg">{`${data?.from?.firstName} ${data?.from?.lastName}`}</div>
+            <span className="font-bold text-lg">
+              {data.isGroup
+                ? data.name
+                : `${data?.from?.firstName} ${data?.from?.lastName}`}
+            </span>
+            {data.isGroup && (
+              <div className="flex flex-col items-center">
+                <div className="text-xs">Group voice Call</div>
+                <div className="text-xs">
+                  From {`${data?.from?.firstName} ${data?.from?.lastName}`}{" "}
+                </div>
+              </div>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex gap-2">
+        <AlertDialogFooter className="flex gap-2 justify-center sm:justify-center">
           <Button
             variant="destructive"
-            className="w-full flex items-center justify-center gap-2"
+            className="flex items-center justify-center gap-2"
             onClick={() => setOpen(false)}
           >
             <div className="font-bold">Decline</div>
@@ -46,7 +63,7 @@ export function IncomingCallAlert({
           </Button>
           <Button
             variant="green"
-            className="w-full flex items-center justify-center gap-2"
+            className="flex items-center justify-center gap-2"
             onClick={() => setOpen(false)}
           >
             <div className="font-bold">Accept</div>

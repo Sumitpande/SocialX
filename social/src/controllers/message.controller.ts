@@ -131,13 +131,14 @@ export const makeCall = async (req: Request, res: Response) => {
         const from: any = toConversation?.participants.find((p: any) => p._id.toString() === senderId.toString());
         const call = await createCall(senderId, conversationId, callType);
         to.forEach((recipient: any) => {
+            console.log("recipient", recipient?.socket_id);
             io.to(recipient?.socket_id).emit("incoming_call", {
                 message: "Incoming call",
-                from: {
-                    firstName: from?.firstName,
-                    lastName: from?.lastName,
-                    status: from?.status,
-                },
+                from: from,
+                to: to,
+                isGroup: toConversation?.isGroup,
+                avatar: toConversation?.avatar,
+                name: toConversation?.name || "",
                 callType: callType,
             });
         });

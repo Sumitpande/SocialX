@@ -53,8 +53,8 @@ export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
       case "makeCall":
         makeCall({
           callType: "audio",
-          conversationId: selectedConversation?._id?.toString() || "",
-          from: authUser?._id,
+          conversation: selectedConversation,
+          from: authUser,
         });
         break;
       case "startVideoCall":
@@ -70,11 +70,6 @@ export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
 
   return (
     <div className="w-full h-20 flex p-4 justify-between items-center border-b">
-      <OutgoingCall
-        open={open}
-        setOpen={setOpen}
-        data={getOutgoingCallData()}
-      />
       <div className="flex items-center gap-2">
         <Avatar className="flex justify-center items-center">
           <AvatarImage
@@ -96,17 +91,14 @@ export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
           <Link
             key={index}
             to="#"
+            onClick={() => handleActionClick(icon.action)}
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon" }),
               "h-9 w-9",
               "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
             )}
           >
-            <icon.icon
-              onClick={() => handleActionClick(icon.action)}
-              size={20}
-              className="text-muted-foreground"
-            />
+            <icon.icon size={20} className="text-muted-foreground" />
           </Link>
         ))}
       </div>

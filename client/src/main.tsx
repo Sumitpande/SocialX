@@ -8,11 +8,11 @@ import { SocketContextProvider } from "@/context/SocketContext.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <SocketContextProvider>
-        <AuthContextProvider>
+      <AuthContextProvider>
+        <SocketContextProvider>
           <App />
-        </AuthContextProvider>
-      </SocketContextProvider>
+        </SocketContextProvider>
+      </AuthContextProvider>
     </BrowserRouter>
   </StrictMode>
 );

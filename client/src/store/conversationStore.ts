@@ -1,32 +1,61 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 // import { persist } from 'zustand/middleware';
-import {  IConversation } from '../types/index'
-
-
+import { ICallData, IConversation, IOutgoingCallData } from "../types/index";
 
 interface ConversationActions {
-    setConversations: (value: IConversation[]) => void;
-    setSelectedConversation: (selectedConversation: IConversation) => void;
-    resetConversationStore: () => void
+  setIncomingCall: (incomingCall: boolean) => void;
+  setOutgoingCall: (outgoingCall: boolean) => void;
+  setCallData: (callData: ICallData) => void;
+  setOutgoingCallData: (outGoingCallData: IOutgoingCallData) => void;
+  setConversations: (value: IConversation[]) => void;
+  setSelectedConversation: (selectedConversation: IConversation) => void;
+  resetConversationStore: () => void;
 }
 
 interface ConversationState {
-    conversations: IConversation[];
-    selectedConversation: IConversation;
+  incomingCall: boolean;
+  outgoingCall: boolean;
+  callData: ICallData;
+  outGoingCallData: IOutgoingCallData;
+
+  conversations: IConversation[];
+  selectedConversation: IConversation;
 }
 
 const initialState: ConversationState = {
-    conversations: [] as IConversation[],
-    selectedConversation: {} as IConversation,
-}
+  incomingCall: false,
+  outgoingCall: false,
+  callData: {} as ICallData,
+  outGoingCallData: {} as IOutgoingCallData,
+  conversations: [] as IConversation[],
+  selectedConversation: {} as IConversation,
+};
 
-const useConversationStore = create<ConversationState & ConversationActions>()((set) => ({
+const useConversationStore = create<ConversationState & ConversationActions>()(
+  (set) => ({
     ...initialState,
-    resetConversationStore: () => { set(initialState) },
-    setConversations: (value: IConversation[]) => {
-        set({ conversations: value })
+    setIncomingCall: (incomingCall: boolean) => {
+      set({ incomingCall });
+    },
+    setOutgoingCall: (outgoingCall: boolean) => {
+      set({ outgoingCall });
+    },
+    setOutgoingCallData: (outGoingCallData: IOutgoingCallData) => {
+      set({ outGoingCallData });
+    },
+    resetConversationStore: () => {
+      set(initialState);
+    },
+    setCallData: (callData: ICallData) => {
+      set({ callData });
     },
 
-    setSelectedConversation: (selectedConversation: IConversation) => set({ selectedConversation }),
-}));
+    setConversations: (value: IConversation[]) => {
+      set({ conversations: value });
+    },
+
+    setSelectedConversation: (selectedConversation: IConversation) =>
+      set({ selectedConversation }),
+  })
+);
 export default useConversationStore;
