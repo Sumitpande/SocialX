@@ -1,8 +1,3 @@
-// import { Badge } from "@/components/ui/badge";
-// import UserRequestItem from "@/components/UserRequestItem";
-// import UserSuggestionsItem from "@/components/UserSuggestionItem";
-
-import useAuthStore from "@/store/AuthStore";
 import useUserStore from "@/store/userStore";
 import { useEffect } from "react";
 
@@ -17,13 +12,12 @@ import UserRequestItem from "./user-request-item";
 import UserSuggestionItem from "./user-suggestion-item";
 
 export function UserCard() {
-  const { token } = useAuthStore();
   const { userRequests, suggestions, getUserRequests, getUserSuggestions } =
     useUserStore();
   useEffect(() => {
-    getUserRequests(token);
-    getUserSuggestions(token);
-  }, [token, getUserRequests, getUserSuggestions]);
+    getUserRequests();
+    getUserSuggestions();
+  }, [getUserRequests, getUserSuggestions]);
   return (
     <Card className="rounded-none shadow-none">
       <CardHeader>

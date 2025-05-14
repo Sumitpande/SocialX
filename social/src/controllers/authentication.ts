@@ -4,7 +4,6 @@ import { authentication, genSalt, isUserAuthenticated } from "../helpers/helper"
 import { IUser } from "../models/User";
 
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "social";
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -30,11 +29,11 @@ export const login = async (req: Request, res: Response) => {
         const salt = await genSalt();
         const token = await authentication(user._id.toString(), salt);
         user.authentication.sessionToken = token;
-        const jwtToken = jwt.sign({ userId: user._id }, SECRET_KEY, {
+        const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
             expiresIn: "15d",
         });
         await user.save();
-        res.cookie("jwt", token, {
+        res.cookie("token", jwtToken, {
             maxAge: 15 * 24 * 60 * 60 * 1000, // MS
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
             sameSite: "strict", // CSRF attacks cross-site request forgery attacks
@@ -117,7 +116,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const logout = (req: Request, res: Response) => {
     try {
-        res.cookie("jwt", "", { maxAge: 0 });
+        res.clearCookie("token");
         res.status(200).json({ message: "Logged out successfully." });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error." });

@@ -6,13 +6,11 @@ import {
   FC,
   ReactNode,
 } from "react";
-// import { useAuthContext } from './AuthContext'
+
 import SocketService from "../socket";
 import { ISocketCtx } from "../types/index";
 import { Socket } from "socket.io-client";
-// import useUserStore from '../store/userStore'
-// import useAuthStore from '../store/AuthStore'
-// import { jwtDecode } from 'jwt-decode'
+
 import { useAuthContext } from "./AuthContext";
 
 const SocketContext = createContext<ISocketCtx>({} as ISocketCtx);
@@ -27,11 +25,8 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const { authUser } = useAuthContext();
-  // const { token } = useAuthStore()
 
   useEffect(() => {
-    // const decoded = jwtDecode<UserIdJwtPayload>(token)
-    console.log("authUser:::::::::::::::::", authUser);
     if (authUser) {
       SocketService.connect("http://localhost:3000", authUser?._id);
       console.log(

@@ -11,6 +11,7 @@ import GuestGuard from "@/components/GuestGuard";
 import PostDetails from "./components/post/PostDetails";
 import Messages from "./pages/Messages";
 import { FeedContainer } from "./components/post/FeedContainer";
+import { useAuthContext } from "./context/AuthContext";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -22,6 +23,10 @@ function App() {
   const Register = Loadable(
     lazy(() => import("@/pages/authentication/Register"))
   );
+  const { loading } = useAuthContext();
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <Routes>

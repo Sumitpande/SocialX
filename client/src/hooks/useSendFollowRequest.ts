@@ -1,13 +1,12 @@
 import { useState } from "react";
 import axios from "../utils/axios";
 
-import useAuthStore from "../store/AuthStore";
 import { toast } from "sonner";
 
 const useSendFollowRequest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const { token } = useAuthStore();
+
   const sendRequest = async (to: string) => {
     setLoading(true);
     try {
@@ -17,9 +16,7 @@ const useSendFollowRequest = () => {
           to,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: {},
         }
       );
       console.log("sendRequest created res>>>", res);

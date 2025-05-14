@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import * as _ from "lodash";
-import { getUserById, getUserBySessionToken } from "../models/UserActions";
+import { getUserById } from "../models/UserActions";
 
-const jwt = require("jsonwebtoken");
-const SECRET_KEY = "social";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 import multer from "multer";
 const { v4: uuidv4 } = require("uuid");
@@ -25,28 +24,42 @@ export interface IRequest extends Request {
     userId: string;
 }
 
-export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const sessionToken = req.cookies["SOCIAL_AUTH"];
-        if (!sessionToken) {
-            return res.sendStatus(403);
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized - No token provided" });
         }
 
-        const user = await getUserBySessionToken(sessionToken);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (!decoded) {
+            return res.status(401).json({ message: "Unauthorized - Invalid token" });
+        }
+        const user = await getUserById(decoded.userId).select("-password");
+
         if (!user) {
-            return res.sendStatus(403);
+            return res.status(401).json({ message: "Unauthorized - User not found" });
         }
 
-        _.merge(req, { identity: user });
+        _.merge(req, { userId: user._id });
 
         return next();
     } catch (error) {
-        console.log(error);
-        return res.sendStatus(400);
+        console.log("error in verify token:", error);
+        if (error instanceof TokenExpiredError) {
+            console.log("JWT expired");
+            res.clearCookie("token");
+            res.status(400).json({ message: (error as Error).message });
+        } else {
+            console.log("JWT invalid:", (error as Error).message);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
     }
 };
 
-export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
     // const token = req.header('Authorization');
     // if (!token) return res.status(401).json({ error: 'Access denied' });
     try {
@@ -64,7 +77,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
                 message: "Access denied.",
             });
         }
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         try {
             const user = await getUserById(decoded.userId);
             if (!user) {
@@ -72,7 +85,8 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
                     message: "The user belonging to this token does no longer exists.",
                 });
             }
-            req.userId = user._id;
+            req.userId = decoded.userId;
+
             next();
         } catch (error) {
             console.log("error", error);

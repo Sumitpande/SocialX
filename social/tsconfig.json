@@ -5,12 +5,13 @@
         "lib": ["es6"],
         "allowJs": true,
         "outDir": "build",
-        "moduleResolution": "node", 
+        "moduleResolution": "node",
         "rootDir": "src",
         "strict": true,
         "noImplicitAny": false,
         "esModuleInterop": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "typeRoots": ["./node_modules/@types", "./typings"]
     },
     "files": ["src/typings/Request.d.ts"]
 }

@@ -12,23 +12,29 @@ interface AuthGuardProps {
 
 const AuthGuard: FC<AuthGuardProps> = (props) => {
   const { children } = props;
-  const { authUser } = useAuthContext();
+  const { authUser, loading } = useAuthContext();
   const location = useLocation();
   const [requestedLocation, setRequestedLocation] = useState<string | null>();
   console.log("authUserauthUser", authUser);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (!authUser._id) {
+    console.log("N o  U S E R");
+
     if (location.pathname !== requestedLocation) {
       setRequestedLocation(location.pathname);
     }
     return <Navigate to={APP_PATH.login} />;
   }
-  // This is done so that in case the route changes by any chance through other
-  // means between the moment of request and the render we navigate to the initially
-  // requested route.
+
+  // ✅ Authenticated → redirect back to requested route if needed
   if (requestedLocation && location.pathname !== requestedLocation) {
+    const redirectTo = requestedLocation;
     setRequestedLocation(null);
-    console.log("requestedLocation", requestedLocation);
-    return <Navigate to={requestedLocation} />;
+    return <Navigate to={redirectTo} replace />;
   }
 
   return <>{children}</>;

@@ -2,7 +2,6 @@ import { useState } from "react";
 // import useConversation from "../store/conversationStore";
 import axios from "../utils/axios";
 
-import useAuthStore from "../store/AuthStore";
 import { toast } from "sonner";
 import useConversationStore from "@/store/conversationStore";
 import { IConversation, IUser } from "@/types";
@@ -15,7 +14,7 @@ interface ICallData {
 const useMakeCall = () => {
   const [loading, setLoading] = useState(false);
   const { setOutgoingCall, setOutgoingCallData } = useConversationStore();
-  const { token } = useAuthStore();
+
   const makeCall = async (data: ICallData) => {
     setLoading(true);
     try {
@@ -36,10 +35,7 @@ const useMakeCall = () => {
           callType: data.callType,
         }),
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: {},
         }
       );
       console.log("made call>>>", res);

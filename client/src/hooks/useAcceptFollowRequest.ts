@@ -1,13 +1,12 @@
 import { useState } from "react";
 import axios from "../utils/axios";
 
-import useAuthStore from "../store/AuthStore";
 import { toast } from "sonner";
 
 const useAcceptFollowRequest = () => {
   const [loadingA, setLoadingA] = useState(false);
   const [errorA, setErrorA] = useState(false);
-  const { token } = useAuthStore();
+
   const acceptRequest = async (requestId: string) => {
     setLoadingA(true);
     try {
@@ -17,9 +16,7 @@ const useAcceptFollowRequest = () => {
           requestId,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: {},
         }
       );
       console.log("Request accept res>>>", res);

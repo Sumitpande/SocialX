@@ -2,7 +2,7 @@ import { Schema, model, Document } from "mongoose";
 import Call from "./Call";
 
 // Action functions
-export const createCall = async (initiatedBy: Schema.Types.ObjectId, conversationId: Schema.Types.ObjectId, callType: string) => {
+export const createCall = async (initiatedBy: string, conversationId: Schema.Types.ObjectId, callType: string) => {
     const call = new Call({
         initiatedBy,
         conversationId,

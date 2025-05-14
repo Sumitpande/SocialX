@@ -4,6 +4,9 @@ import { Socket } from "socket.io-client";
 export interface IAuthCtx {
   authUser: IUser;
   setAuthUser: (user: IUser) => void;
+  loading: boolean;
+  logout: () => object;
+  refreshUser: () => object;
 }
 export interface ISocketCtx {
   socket: Socket;

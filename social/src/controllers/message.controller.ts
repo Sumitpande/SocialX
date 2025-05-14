@@ -10,7 +10,7 @@ export const sendMessage = async (req: Request, res: Response) => {
         const { message } = req.body;
         const { conversationId } = req.params;
         const senderId = req.userId;
-        if (!conversationId) {
+        if (!conversationId || !senderId) {
             return res.sendStatus(400);
         }
         let conversation: any = await getConversationById(conversationId);
@@ -29,7 +29,7 @@ export const sendMessage = async (req: Request, res: Response) => {
         console.log(`populatedConversation >>${populatedConversation}`);
         if (populatedConversation.participants) {
             populatedConversation.participants.forEach((participant: any) => {
-                if (participant.socket_id && participant._id.toString() !== senderId.toString()) {
+                if (participant.socket_id && participant._id.toString() !== senderId) {
                     io.to(participant.socket_id).emit("newMessage", {
                         conversationId: conversation._id,
                         message: newMessageObj,
@@ -52,7 +52,9 @@ export const createEmptyConversation = async (req: Request, res: Response) => {
     try {
         const { members, name } = req.body;
         const senderId = req.userId;
-
+        if (!senderId) {
+            return res.sendStatus(400);
+        }
         const conversation = await createConversation({
             participants: [senderId, ...members],
             messages: [],
@@ -79,6 +81,9 @@ export const getMessages = async (req: Request, res: Response) => {
     try {
         const { userToChatId } = req.params;
         const senderId = req.userId;
+        if (!senderId) {
+            return res.sendStatus(400);
+        }
         console.log("getting msg of user ", userToChatId);
         const conversation = await getConversation({
             participants: { $all: [senderId, userToChatId] },
@@ -99,6 +104,9 @@ export const getMessages = async (req: Request, res: Response) => {
 export const getMyConversations = async (req: Request, res: Response) => {
     try {
         const senderId = req.userId;
+        if (!senderId) {
+            return res.sendStatus(400);
+        }
         const conversations = await getConversations({
             participants: senderId,
         })
@@ -124,6 +132,9 @@ export const makeCall = async (req: Request, res: Response) => {
     try {
         const { callType, conversationId } = req.body;
         const senderId = req.userId;
+        if (!senderId) {
+            return res.sendStatus(400);
+        }
         console.log("getting call for ", conversationId);
         const toConversation = await getConversationById(conversationId).populate("participants", "socket_id email status firstName lastName");
         console.log("toConversation", toConversation);

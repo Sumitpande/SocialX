@@ -13,11 +13,15 @@ import { IUser } from "../models/User";
 export const acceptFollowRequest = async (req: Request, res: Response) => {
     try {
         const { requestId } = req.body;
+        const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
         const request = await getUserRequestsById(requestId);
         if (!request) {
             res.json({ message: "Invalid Request Id" }).status(400).end();
         } else {
-            const user: any = await getUserById(req.userId);
+            const user: any = await getUserById(userId);
             user?.followers.push(request?.sender);
             user?.save();
             const sender = await getUserById(request?.sender.toString());
@@ -61,7 +65,11 @@ export const createFollowRequest = async (req: Request, res: Response) => {
 
 export const getFollowings = async (req: Request, res: Response) => {
     try {
-        const followings = await getUserById(req.userId.toString()).populate("followings").select("firstName lastName username");
+        const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
+        const followings = await getUserById(userId).populate("followings").select("firstName lastName username");
         res.json({
             status: "success",
             data: followings,
@@ -76,7 +84,11 @@ export const getFollowings = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
     try {
         console.log("getting user");
-        const user = await getUserById(req.userId).select("-socket_id");
+        const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
+        const user = await getUserById(userId).select("-socket_id");
         console.log("getting user", user);
         res.status(200).json(user);
     } catch (error) {
@@ -86,7 +98,11 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const getFollowers = async (req: Request, res: Response) => {
     try {
-        const followers = await getUserById(req.userId.toString()).populate("followers").select("firstName lastName username");
+        const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
+        const followers = await getUserById(userId).populate("followers").select("firstName lastName username");
         res.status(200).json({
             status: "success",
             data: followers,
@@ -98,7 +114,11 @@ export const getFollowers = async (req: Request, res: Response) => {
 
 export const getFriendRequests = async (req: Request, res: Response) => {
     try {
-        const requests = await getUserRequests(req.userId.toString()).populate("sender", "firstName lastName username");
+        const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
+        const requests = await getUserRequests(userId).populate("sender", "firstName lastName username");
         console.log("requests", requests);
         res.json(requests).status(200).end();
     } catch (error) {
@@ -109,6 +129,9 @@ export const getFriendRequests = async (req: Request, res: Response) => {
 export const getUserSuggestions = async (req: Request, res: Response) => {
     try {
         const userId = req.userId;
+        if (!userId) {
+            return res.sendStatus(400);
+        }
         const currentUser = await getUserById(userId).populate("followings");
 
         if (!currentUser) return res.status(404).json({ message: "User not found" });

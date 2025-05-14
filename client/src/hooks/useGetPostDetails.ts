@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import useAuthStore from "../store/AuthStore";
 import { toast } from "sonner";
 import axios from "../utils/axios";
 import { IPost } from "@/types";
@@ -8,7 +7,7 @@ import { IPost } from "@/types";
 const useGetPostDetails = (id: string) => {
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState({} as IPost);
-  const { token } = useAuthStore();
+
   useEffect(() => {
     getPostDetails(id);
   }, [id]);
@@ -17,9 +16,7 @@ const useGetPostDetails = (id: string) => {
     setLoading(true);
     try {
       const res = await axios.get(`/post/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: {},
       });
       console.log("post detail>>", res.data);
       //   if (res.data.error) throw new Error(res.data.error);
