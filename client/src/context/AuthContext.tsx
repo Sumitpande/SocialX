@@ -19,14 +19,17 @@ export const useAuthContext = () => {
 export const AuthContextProvider: FC<{ children: ReactNode }> = ({
   children,
 }): ReactNode => {
-  const [authUser, setAuthUser] = useState({} as IUser);
+  const userStr = localStorage.getItem("user");
+  const [authUser, setAuthUser] = useState(
+    userStr ? (JSON.parse(userStr) as IUser) : ({} as IUser)
+  );
   const [loading, setLoading] = useState(false);
 
   const refreshUser = async () => {
     setLoading(true);
     try {
       const res = await axios.get("/me"); // protected route
-
+      localStorage.setItem("user", JSON.stringify(res.data));
       setAuthUser(res.data);
     } catch (error) {
       setAuthUser({} as IUser); // unauthenticated
@@ -50,8 +53,10 @@ export const AuthContextProvider: FC<{ children: ReactNode }> = ({
     }
   };
   useEffect(() => {
-    refreshUser();
-  }, []);
+    if (!authUser) {
+      refreshUser();
+    }
+  }, [authUser]);
   return (
     <AuthContext.Provider
       value={{ authUser, setAuthUser, loading, logout, refreshUser }}

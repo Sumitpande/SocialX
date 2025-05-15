@@ -5,6 +5,14 @@ import { IUser } from "../models/User";
 
 const jwt = require("jsonwebtoken");
 
+const createAccessToken = (user: IUser) => {
+    return jwt.sign({ userId: user._id }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+};
+
+const createRefreshToken = (user: IUser) => {
+    return jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
+};
+
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -29,11 +37,16 @@ export const login = async (req: Request, res: Response) => {
         const salt = await genSalt();
         const token = await authentication(user._id.toString(), salt);
         user.authentication.sessionToken = token;
-        const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "15d",
-        });
+        const jwtToken = createAccessToken(user);
+        const refreshToken = createRefreshToken(user);
         await user.save();
-        res.cookie("token", jwtToken, {
+        res.cookie("access_token", jwtToken, {
+            maxAge: 15 * 60 * 1000, // MS
+            httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+            sameSite: "strict", // CSRF attacks cross-site request forgery attacks
+            secure: process.env.NODE_ENV !== "development",
+        });
+        res.cookie("refresh_token", refreshToken, {
             maxAge: 15 * 24 * 60 * 60 * 1000, // MS
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
             sameSite: "strict", // CSRF attacks cross-site request forgery attacks
@@ -42,18 +55,6 @@ export const login = async (req: Request, res: Response) => {
         // res.cookie('SOCIAL_AUTH', user.authentication.sessionToken, { domain: 'localhost', path: '/' });
 
         return res.status(200).json({
-            token: jwtToken,
-            user: {
-                _id: user._id,
-                avatar: user.avatar,
-                email: user.email,
-                username: user.username,
-                status: user.status,
-                gender: user.gender,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                verified: user.verified,
-            },
             message: "Logged in Successfully.",
         });
     } catch (error) {
@@ -116,9 +117,26 @@ export const register = async (req: Request, res: Response) => {
 
 export const logout = (req: Request, res: Response) => {
     try {
-        res.clearCookie("token");
-        res.status(200).json({ message: "Logged out successfully." });
+        res.clearCookie("access_token").clearCookie("refresh_token");
+        res.status(204).json({ message: "Logged out successfully." });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error." });
     }
+};
+
+export const refresh = (req: Request, res: Response) => {
+    const token = req.cookies.refresh_token;
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.JWT_REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+
+        const accessToken = createAccessToken(user);
+        res.cookie("access_token", accessToken, {
+            httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+            sameSite: "strict", // CSRF attacks cross-site request forgery attacks
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 15 * 60 * 1000,
+        }).sendStatus(200);
+    });
 };
