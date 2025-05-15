@@ -29,11 +29,13 @@ export default function Layout() {
     <div>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset
+          className={isMobile ? "h-[calc(100vh-50px)]" : "h-screen"}
+        >
           {!isMobile && (
             <SidebarTrigger className=" absolute left-0 top-14 z-50" />
           )}
-          <div className="p-1 pt-0 main-layout-container">
+          <div className="p-1 pt-0 h-full">
             <Outlet />
           </div>
         </SidebarInset>
