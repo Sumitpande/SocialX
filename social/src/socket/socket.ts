@@ -90,6 +90,10 @@ io.on("connection", async (socket: any) => {
         }
     });
 
+    socket.on("call-ringing", async (data: any) => {
+        console.log("ringing");
+        io.to(data.from.socket_id).emit("call-ringing", data);
+    });
     // socket.on('get_direct_conversations', async ({ user_id }: { user_id: string }, callback: any) => {
     //     const existing_conversations = await getDirectMessages({
     //         participants: { $all: [user_id] },

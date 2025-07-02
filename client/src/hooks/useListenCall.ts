@@ -22,6 +22,7 @@ const useListenCall = () => {
     socket?.on("incoming_call", (data) => {
       console.log("Incoming call data:", data);
       onCallStarted(data);
+      socket.emit("call-ringing", data);
     });
 
     socket?.on("callEnded", (data) => {

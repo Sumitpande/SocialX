@@ -1,13 +1,12 @@
 import { Avatar, AvatarImage } from "../ui/avatar";
 
-import { Info, Phone, Video } from "lucide-react";
+import { Info, InfoIcon, Phone, Video } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button";
 import { IConversation, IUser } from "@/types";
 import { useAuthContext } from "@/context/AuthContext";
 import useMakeCall from "@/hooks/useMakeCall";
-import { OutgoingCall } from "../calls/OutgoingCall";
 
 interface ChatTopbarProps {
   selectedConversation?: IConversation;
@@ -21,11 +20,7 @@ const TopBarIcons = [
 
 export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
   const { authUser } = useAuthContext();
-  const { makeCall, open, setOpen } = useMakeCall();
-
-  const getOutgoingCallData = () => {
-    return { name: getLabel() || "", avatar: getAvatar() || "" };
-  };
+  const { makeCall } = useMakeCall();
 
   const getLabel = () => {
     if (selectedConversation?.isGroup) {
@@ -51,6 +46,7 @@ export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
   const handleActionClick = (action: string) => {
     switch (action) {
       case "makeCall":
+        if (!selectedConversation) return;
         makeCall({
           callType: "audio",
           conversation: selectedConversation,
@@ -87,20 +83,32 @@ export default function ChatTopbar({ selectedConversation }: ChatTopbarProps) {
       </div>
 
       <div>
-        {TopBarIcons.map((icon, index) => (
-          <Link
-            key={index}
-            to="#"
-            onClick={() => handleActionClick(icon.action)}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon" }),
-              "h-9 w-9",
-              "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-            )}
-          >
-            <icon.icon size={20} className="text-muted-foreground" />
-          </Link>
-        ))}
+        {!selectedConversation?.isGroup &&
+          TopBarIcons.map((icon, index) => (
+            <Link
+              key={index}
+              to="#"
+              onClick={() => handleActionClick(icon.action)}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon" }),
+                "h-9 w-9",
+                "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+              )}
+            >
+              <icon.icon size={20} className="text-muted-foreground" />
+            </Link>
+          ))}
+        <Link
+          to="#"
+          onClick={() => handleActionClick("showInfo")}
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "icon" }),
+            "h-9 w-9",
+            "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+          )}
+        >
+          <InfoIcon size={20} className="text-muted-foreground" />
+        </Link>
       </div>
     </div>
   );

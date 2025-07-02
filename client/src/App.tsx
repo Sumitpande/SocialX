@@ -12,6 +12,7 @@ import PostDetails from "./components/post/PostDetails";
 import Messages from "./pages/Messages";
 import { FeedContainer } from "./components/post/FeedContainer";
 import { useAuthContext } from "./context/AuthContext";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -44,6 +45,7 @@ function App() {
               path={APP_PATH.general.home}
               element={<FeedContainer />}
             />
+            <Route index path="/:username" element={<ProfilePage />} />
             <Route path="/:username/status/:postId" element={<PostDetails />} />
           </Route>
           <Route path={APP_PATH.general.messages} element={<Messages />} />

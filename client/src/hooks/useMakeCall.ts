@@ -29,11 +29,11 @@ const useMakeCall = () => {
       setOutgoingCall(true);
       const res = await axios.post(
         `/make/call`,
-        JSON.stringify({
+        {
           conversationId: data.conversation._id,
           from: data.from._id,
           callType: data.callType,
-        }),
+        },
         {
           headers: {},
         }

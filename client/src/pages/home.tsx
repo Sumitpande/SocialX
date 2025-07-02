@@ -9,7 +9,7 @@ import { Outlet } from "react-router-dom";
 export default function Home() {
   return (
     <div className="h-full flex flex-row ">
-      <ScrollArea className="h-[calc(100vh)]">
+      <ScrollArea className="h-[calc(100vh)] w-full grow">
         <Outlet />
       </ScrollArea>
       <Separator className="mx-1 h-full" orientation="vertical" />

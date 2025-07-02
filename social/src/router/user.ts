@@ -5,6 +5,7 @@ import {
     getUserSuggestions,
     getFollowings,
     getUser,
+    getProfile,
     createFollowRequest,
     deleteFollowRequest,
     acceptFollowRequest,
@@ -14,7 +15,8 @@ import { verifyToken } from "../middlewares";
 export default (router: express.Router) => {
     router.get("/followers", verifyToken, getFollowers);
     router.get("/followings", verifyToken, getFollowings);
-    router.get("/me", verifyToken, getUser);
+    router.get("/me", verifyToken, getProfile);
+    router.get("/user/:username", verifyToken, getUser);
     router.get("/user_requests", verifyToken, getFriendRequests);
     router.get("/user_suggestions", verifyToken, getUserSuggestions);
     router.post("/create-follow-request", verifyToken, createFollowRequest);

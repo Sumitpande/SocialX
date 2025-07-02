@@ -3,6 +3,7 @@ import { IUser, UserModel } from "./User";
 export const getUsers = (query: any = {}) => UserModel.find(query);
 
 export const getUserByEmail = (email: string) => UserModel.findOne({ email });
+export const getUserByUsername = (username: string) => UserModel.findOne({ username });
 
 export const getUserBySessionToken = (sessionToken: string) =>
     UserModel.findOne({

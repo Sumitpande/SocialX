@@ -19,6 +19,9 @@ export interface IUser {
   _id: string;
   avatar?: string;
   email?: string;
+  followers?: Array<string | object>;
+  followings?: Array<string | object>;
+  isFollowing?: boolean;
 }
 
 export interface IMessage {

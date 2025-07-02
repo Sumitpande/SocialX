@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { getUserById, getUsers } from "../models/UserActions";
+import { getUserById, getUserByUsername, getUsers } from "../models/UserActions";
 import {
     createUserRequest,
     deleteUserRequest,
@@ -9,6 +9,7 @@ import {
     getUserRequestsSent,
 } from "../models/UserRequestActions";
 import { IUser } from "../models/User";
+const { ObjectId } = require("mongodb");
 
 export const acceptFollowRequest = async (req: Request, res: Response) => {
     try {
@@ -82,6 +83,26 @@ export const getFollowings = async (req: Request, res: Response) => {
 };
 
 export const getUser = async (req: Request, res: Response) => {
+    try {
+        const userId = req.userId;
+        const { username } = req.params;
+        if (!userId || !username) {
+            return res.sendStatus(400);
+        }
+        const user = await getUserByUsername(username).select("firstName lastName avatar username createdAt followers followings");
+        console.log("getting user>>", user);
+        const userObjectId = new ObjectId(userId);
+        const data = {
+            ...user?.toObject(),
+            isFollowing: user?.followers.includes(userObjectId),
+        };
+        res.status(200).json(data);
+    } catch (error) {
+        res.sendStatus(400);
+    }
+};
+
+export const getProfile = async (req: Request, res: Response) => {
     try {
         console.log("getting user");
         const userId = req.userId;

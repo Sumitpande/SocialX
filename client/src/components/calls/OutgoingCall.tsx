@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useAuthContext } from "@/context/AuthContext";
+// import { useAuthContext } from "@/context/AuthContext";
 import { Mic, MicOff, PhoneOff, Volume2, VolumeOff } from "lucide-react";
 import { Card, CardDescription } from "../ui/card";
 import { IOutgoingCallData, IUser } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSocketContext } from "@/context/SocketContext";
 
 export function OutgoingCall({
   open,
@@ -25,13 +26,26 @@ export function OutgoingCall({
 }) {
   const [speaker, setSpeaker] = useState(false);
   const [muted, setMuted] = useState(false);
-  const { authUser } = useAuthContext();
+  // const { authUser } = useAuthContext();
+  const [ringing, setRinging] = useState(false);
+  const { socket } = useSocketContext();
+  useEffect(() => {
+    socket.on("call-ringing", () => {
+      console.log("ringing");
+      setTimeout(() => {
+        setRinging(true);
+      }, 3000);
+    });
+    return () => {
+      socket.off("call-ringing");
+    };
+  }, [socket]);
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent className="border-4 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.7)] animation-pulse-glow">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center">
-            Calling...
+            Calling... -{ringing.toString()}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center my-4 flex flex-col items-center gap-3">
             <div className="flex">
@@ -42,8 +56,10 @@ export function OutgoingCall({
                       <AvatarImage src={user?.avatar} alt={user?.firstName} />
                       <AvatarFallback>{user?.firstName[2]}</AvatarFallback>
                     </Avatar>
-                    <div className="font-bold text-md my-1">{`${user?.firstName} ${user?.lastName}`}</div>
-                    <div className="text-xs">Ringing...</div>
+                    <span className="font-bold text-md my-1">{`${user?.firstName} ${user?.lastName}`}</span>
+                    <div className="text-xs">
+                      {ringing ? "Ringing..." : "Calling"}
+                    </div>
                   </CardDescription>
                 </Card>
               ))}
