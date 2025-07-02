@@ -96,13 +96,13 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
 
             <Link
               to="#"
+              onClick={() => setOpen(true)}
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
                 "h-9 w-9"
               )}
             >
-              <SquarePen onClick={() => setOpen(true)} size={20} />
-              {/* <UserSuggestionsDialog /> */}
+              <SquarePen size={20} />
             </Link>
           </div>
         </div>
