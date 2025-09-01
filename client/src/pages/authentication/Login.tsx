@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import useLogin from "@/hooks/useLogin";
-
+import LandingLogo from "@/assets/landing.svg";
 import { useForm } from "react-hook-form";
 export default function Login() {
   const [show, setShow] = useState(false);
@@ -54,86 +54,96 @@ export default function Login() {
   }
   return (
     <div className="h-screen flex">
-      <Card className="m-auto max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Email" {...field} />
-                        </FormControl>
+      <div className="m-auto flex gap-20">
+        <img
+          className="size-80 hidden md:block"
+          src={LandingLogo}
+          alt="Social"
+        />
+        <Card className="m-auto max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-2xl">Login</CardTitle>
+            <CardDescription>
+              Enter your email below to login to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Email" {...field} />
+                          </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-2 relative">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center">
-                          <FormLabel>Password</FormLabel>
-                          <Link
-                            to="#"
-                            className="ml-auto inline-block text-sm underline"
-                          >
-                            Forgot your password?
-                          </Link>
-                        </div>
-
-                        <FormControl>
-                          <Input {...field} type={show ? "text" : "password"} />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {show ? (
-                    <Eye
-                      onClick={() => setShow(false)}
-                      className="absolute right-2.5 bottom-2"
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  ) : (
-                    <EyeOff
-                      onClick={() => setShow(true)}
-                      className="absolute right-2.5 bottom-2"
+                  </div>
+                  <div className="grid gap-2 relative">
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center">
+                            <FormLabel>Password</FormLabel>
+                            <Link
+                              to="#"
+                              className="ml-auto inline-block text-sm underline"
+                            >
+                              Forgot your password?
+                            </Link>
+                          </div>
+
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type={show ? "text" : "password"}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  )}
+                    {show ? (
+                      <Eye
+                        onClick={() => setShow(false)}
+                        className="absolute right-2.5 bottom-2"
+                      />
+                    ) : (
+                      <EyeOff
+                        onClick={() => setShow(true)}
+                        className="absolute right-2.5 bottom-2"
+                      />
+                    )}
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Login
+                  </Button>
+                  <Button type="button" variant="outline" className="w-full">
+                    Login with Google
+                  </Button>
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-                <Button type="button" variant="outline" className="w-full">
-                  Login with Google
-                </Button>
-              </div>
-            </form>
-          </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link to={APP_PATH.register} className="underline">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+              </form>
+            </Form>
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link to={APP_PATH.register} className="underline">
+                Sign up
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

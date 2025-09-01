@@ -37,7 +37,7 @@ export default function CreatePostForm({ isMobile }: { isMobile: boolean }) {
     const filesObj = e.target.files;
     if (!filesObj) return;
 
-    const file = filesObj[0];
+    // const file = filesObj[0];
     setFiles([...files, ...Array.from(filesObj)]);
     // use the file
     console.log(filesObj);

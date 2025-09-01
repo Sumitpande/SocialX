@@ -39,7 +39,6 @@ const comments: Comment[] = [
 
 function TweetComment({
   comment,
-  isReply = false,
   showLine = false,
 }: {
   comment: Comment;
