@@ -1,8 +1,9 @@
+import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import express, { Application } from "express";
 
 import router from "./router";
-
+dotenv.config({ path: "./.env" });
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const RateLimit = require("express-rate-limit");
@@ -10,10 +11,10 @@ const mongoSanitize = require("express-mongo-sanitize");
 
 const morgan = require("morgan");
 const app: Application = express();
-
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: [CLIENT_URL],
         methods: ["GET", "POST"],
         credentials: true,
     }),

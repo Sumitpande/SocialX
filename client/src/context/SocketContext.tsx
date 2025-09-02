@@ -28,12 +28,7 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     if (authUser) {
-      SocketService.connect("http://localhost:3000", authUser?._id);
-      console.log(
-        ">>>>>>>>>>>>>>>>>>>>>>",
-        authUser?._id,
-        SocketService.socket
-      );
+      SocketService.connect(authUser?._id);
       setSocket(SocketService.socket);
       socket?.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);

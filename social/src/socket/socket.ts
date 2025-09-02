@@ -2,15 +2,14 @@ import { createUserRequest, deleteUserRequestById, getUserRequestsById } from ".
 import { IUserRequest } from "../models/UserRequest";
 import { IUser } from "../models/User";
 import { getUserById, updateUserById } from "../models/UserActions";
-import { getConversationById } from "../models/ConversationActions";
 const { Server } = require("socket.io");
 const app = require("../app");
 const { createServer } = require("node:http");
-
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: /^http:\/\/localhost:\d+$/,
+        origin: [CLIENT_URL],
         methods: ["GET", "POST"],
         credentials: true,
     },

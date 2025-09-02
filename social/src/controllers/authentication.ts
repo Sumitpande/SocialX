@@ -52,7 +52,6 @@ export const login = async (req: Request, res: Response) => {
             sameSite: "strict", // CSRF attacks cross-site request forgery attacks
             secure: process.env.NODE_ENV !== "development",
         });
-        // res.cookie('SOCIAL_AUTH', user.authentication.sessionToken, { domain: 'localhost', path: '/' });
 
         return res.status(200).json({
             message: "Logged in Successfully.",
